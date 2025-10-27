@@ -361,9 +361,67 @@
             .hero h1 {
                 font-size: 2.5rem;
             }
-
             .nav-links {
                 display: none;
+            }
+            .nav-toggle {
+                display: block;
+            }
+        }
+
+        /* Botón hamburguesa */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        /* Estilos del menú móvil desplegable */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: absolute;
+                top: 64px;
+                right: 1rem;
+                background: rgba(255,255,255,0.98);
+                backdrop-filter: blur(6px);
+                padding: 1rem;
+                border-radius: 10px;
+                box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+                width: calc(100% - 2rem);
+                max-width: 320px;
+                display: block;
+                transform: translateY(-8px);
+                opacity: 0;
+                transition: transform 240ms cubic-bezier(.2,.8,.2,1), opacity 240ms ease;
+                z-index: 1100;
+            }
+
+            .nav-links.open {
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 0.6rem 0;
+                font-size: 1rem;
+            }
+        }
+
+        /* Ajustes cuando el dispositivo está en orientación horizontal (teléfono girado) */
+        @media (orientation: landscape) and (max-width: 900px) {
+            .hero {
+                align-items: flex-end; /* baja el contenido hacia abajo */
+                padding-bottom: 3.5rem;
+                height: 100vh;
+            }
+
+            .hero-content {
+                padding: 1rem;
+                margin-bottom: 2.5rem;
             }
         }
     </style>
@@ -376,7 +434,11 @@
                 <img src="logo.jpg" alt="EGB Service Logo">
                 <span>EGB Service</span>
             </div>
-            <div class="nav-links">
+            <!-- Botón hamburguesa para pantallas pequeñas -->
+            <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links" id="navLinks">
                 <a href="#inicio">Inicio</a>
                 <a href="#servicios">Servicios</a>
                 <a href="#galeria">Galería</a>
@@ -385,6 +447,8 @@
             </div>
         </div>
     </nav>
+    <!-- Backdrop para menú móvil -->
+    <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
 
     <!-- Hero Section -->
     <section id="inicio" class="hero">
@@ -443,11 +507,31 @@
                 <p>Algunos de nuestros trabajos realizados</p>
             </div>
             <div class="gallery-grid">
-                <!-- Aquí irán las imágenes de la galería -->
+                <!-- Selección automática: imágenes más grandes en la carpeta `images/` -->
                 <div class="gallery-item" data-aos="zoom-in">
-                    <img src="trabajo1.jpg" alt="Trabajo 1">
+                    <img src="images/IMG-20251027-WA0067.jpg" alt="Trabajo destacado 1">
                 </div>
-                <!-- Repetir para más imágenes -->
+                <div class="gallery-item" data-aos="zoom-in" data-aos-delay="50">
+                    <img src="images/IMG-20251027-WA0066.jpg" alt="Trabajo destacado 2">
+                </div>
+                <div class="gallery-item" data-aos="zoom-in" data-aos-delay="100">
+                    <img src="images/IMG-20251027-WA0061.jpg" alt="Trabajo destacado 3">
+                </div>
+                <div class="gallery-item" data-aos="zoom-in" data-aos-delay="150">
+                    <img src="images/IMG-20251027-WA0057.jpg" alt="Trabajo destacado 4">
+                </div>
+                <div class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
+                    <img src="images/IMG-20251027-WA0047.jpg" alt="Trabajo destacado 5">
+                </div>
+                <div class="gallery-item" data-aos="zoom-in" data-aos-delay="250">
+                    <img src="images/IMG-20251027-WA0036.jpg" alt="Trabajo destacado 6">
+                </div>
+                <div class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
+                    <img src="images/IMG-20251027-WA0034.jpg" alt="Trabajo destacado 7">
+                </div>
+                <div class="gallery-item" data-aos="zoom-in" data-aos-delay="350">
+                    <img src="images/IMG-20251027-WA0059.jpg" alt="Trabajo destacado 8">
+                </div>
             </div>
         </div>
     </section>
@@ -544,6 +628,14 @@
         </div>
     </footer>
 
+    <!-- Lightbox modal para la galería -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+        <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar">×</button>
+        <button class="lightbox-prev" id="lightboxPrev" aria-label="Anterior">‹</button>
+        <img id="lightboxImg" src="" alt="Imagen ampliada">
+        <button class="lightbox-next" id="lightboxNext" aria-label="Siguiente">›</button>
+    </div>
+
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         // Inicializar AOS (Animate On Scroll)
@@ -562,10 +654,195 @@
             }
         });
 
+        // Menú hamburguesa (móvil)
+        (function() {
+            const toggle = document.querySelector('.nav-toggle');
+            const navLinks = document.getElementById('navLinks');
+            const navBackdrop = document.getElementById('navBackdrop');
+
+            if (!toggle || !navLinks) return;
+
+            toggle.addEventListener('click', function(e) {
+                const isOpen = navLinks.classList.toggle('open');
+                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                if (navBackdrop) {
+                    navBackdrop.classList.toggle('open', isOpen);
+                    navBackdrop.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+                }
+            });
+
+            // Cerrar al hacer clic en un enlace
+            navLinks.querySelectorAll('a').forEach(function(a) {
+                a.addEventListener('click', function() {
+                    navLinks.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+            // Cerrar al hacer clic fuera del menú (en móviles)
+            document.addEventListener('click', function(e) {
+                if (!navLinks.classList.contains('open')) return;
+                const isClickInside = navLinks.contains(e.target) || toggle.contains(e.target);
+                if (!isClickInside) {
+                    navLinks.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    if (navBackdrop) {
+                        navBackdrop.classList.remove('open');
+                        navBackdrop.setAttribute('aria-hidden', 'true');
+                    }
+                }
+            });
+
+            // Cerrar menú al pulsar el backdrop
+            if (navBackdrop) {
+                navBackdrop.addEventListener('click', function() {
+                    navLinks.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    navBackdrop.classList.remove('open');
+                    navBackdrop.setAttribute('aria-hidden', 'true');
+                });
+            }
+        })();
+
+        /* Lightbox para galería */
+        (function() {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const btnClose = document.getElementById('lightboxClose');
+            const btnPrev = document.getElementById('lightboxPrev');
+            const btnNext = document.getElementById('lightboxNext');
+
+            const items = Array.from(document.querySelectorAll('.gallery-grid .gallery-item img'));
+            let current = -1;
+
+            if (!lightbox || !lightboxImg) return;
+
+            function openLightbox(index) {
+                current = index;
+                lightboxImg.src = items[current].src;
+                lightbox.setAttribute('aria-hidden', 'false');
+                lightbox.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('open');
+                lightbox.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+            }
+
+            function showNext() {
+                if (current < items.length - 1) current++;
+                else current = 0;
+                lightboxImg.src = items[current].src;
+            }
+
+            function showPrev() {
+                if (current > 0) current--;
+                else current = items.length - 1;
+                lightboxImg.src = items[current].src;
+            }
+
+            items.forEach(function(img, idx) {
+                img.style.cursor = 'zoom-in';
+                img.addEventListener('click', function(e) {
+                    openLightbox(idx);
+                });
+            });
+
+            btnClose.addEventListener('click', closeLightbox);
+            btnNext.addEventListener('click', showNext);
+            btnPrev.addEventListener('click', showPrev);
+
+            // Cerrar al clicar fuera de la imagen
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === lightbox || e.target === lightboxImg) {
+                    // si clicas en el overlay (no en botones), cerramos
+                    if (e.target === lightbox) closeLightbox();
+                }
+            });
+
+            // Teclado: ESC, flechas
+            document.addEventListener('keydown', function(e) {
+                if (!lightbox.classList.contains('open')) return;
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowRight') showNext();
+                if (e.key === 'ArrowLeft') showPrev();
+            });
+        })();
+
         // Form submission ya está manejado por el atributo action del formulario
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             // El formulario se enviará por email automáticamente
         });
     </script>
+    <style>
+        /* Estilos para backdrop del menú y lightbox */
+        .nav-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 200ms ease;
+            z-index: 1050;
+        }
+
+        .nav-backdrop.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.8);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 220ms ease;
+            z-index: 1200;
+            padding: 1.5rem;
+        }
+
+        .lightbox.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox img {
+            max-width: 92%;
+            max-height: 82vh;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            transition: transform 200ms ease;
+        }
+
+        .lightbox-close,
+        .lightbox-prev,
+        .lightbox-next {
+            position: absolute;
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: white;
+            padding: 0.5rem 0.8rem;
+            font-size: 1.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+
+        .lightbox-close { top: 1rem; right: 1rem; }
+        .lightbox-prev { left: 1rem; }
+        .lightbox-next { right: 1rem; }
+
+        @media (max-width: 480px) {
+            .lightbox-prev, .lightbox-next { display: none; }
+            .lightbox img { max-width: 100%; max-height: 70vh; }
+        }
+    </style>
 </body>
 </html>
