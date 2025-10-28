@@ -36,15 +36,10 @@
             top: 0;
             left: 0;
             right: 0;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+            padding: 0.75rem 1rem;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .navbar.scrolled {
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
         }
 
         .nav-container {
@@ -53,12 +48,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
         }
 
         .nav-logo {
             display: flex;
             align-items: center;
             gap: 1rem;
+            z-index: 50;
         }
 
         .nav-logo img {
@@ -66,6 +63,12 @@
             width: auto;
         }
 
+        .nav-logo span {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Enlaces de navegación desktop */
         .nav-links {
             display: flex;
             gap: 2rem;
@@ -75,11 +78,63 @@
             color: var(--text);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
         }
 
         .nav-links a:hover {
             color: var(--primary);
+            background-color: #f3f4f6;
+        }
+
+        /* Botón hamburguesa */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        /* Menú móvil */
+        .mobile-menu {
+            display: none;
+            background: white;
+            padding: 1rem;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            background-color: #f3f4f6;
+            color: var(--primary);
+        }
+
+        /* Botón hamburguesa */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            color: var(--text);
+            z-index: 1200;
         }
 
         /* Hero Section */
@@ -379,55 +434,77 @@
             }
         }
 
-        /* Botón hamburguesa */
-        .nav-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.4rem;
-            cursor: pointer;
-            color: var(--text);
-        }
-
-        /* Estilos del menú móvil desplegable */
         @media (max-width: 768px) {
-            .nav-links {
-                position: absolute;
-                top: 64px;
+            .nav-toggle {
+                position: fixed;
+                top: 1rem;
                 right: 1rem;
-                background: rgba(255,255,255,0.98);
-                backdrop-filter: blur(6px);
-                padding: 1rem;
-                border-radius: 10px;
-                box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-                width: calc(100% - 2rem);
-                max-width: 320px;
-                display: block;
-                transform: translateY(-8px);
+                z-index: 1200;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                background: var(--primary);
+                color: white;
+                width: 44px;
+                height: 44px;
+                border-radius: 8px;
+                font-size: 1.5rem;
+                box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
+                border: none;
+                cursor: pointer;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: white;
+                padding: 5rem 1rem 2rem;
+                display: none;
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: flex-start;
+                gap: 0.75rem;
                 opacity: 0;
-                transition: transform 240ms cubic-bezier(.2,.8,.2,1), opacity 240ms ease;
+                transition: all 300ms ease;
                 z-index: 1100;
+                overflow-y: auto;
             }
 
             .nav-links.open {
-                transform: translateX(0);
+                display: flex;
                 opacity: 1;
             }
 
             .nav-links a {
                 display: block;
-                padding: 1rem 0;
                 font-size: 1.2rem;
                 font-weight: 600;
-                text-align: center;
-                width: 100%;
+                padding: 1rem;
+                margin: 0;
+                text-align: left;
+                border-radius: 8px;
+                transition: all 0.3s ease;
                 color: var(--text);
                 text-decoration: none;
-                transition: color 0.3s ease;
+                background: var(--card-bg);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             }
 
-            .nav-links a:hover {
-                color: var(--primary);
+            .nav-links a:hover,
+            .nav-links a:active {
+                background-color: var(--primary);
+                color: white;
+                padding-left: 1.5rem;
+            }
+
+            /* Indicador de sección activa */
+            .nav-links a.active {
+                background-color: var(--primary);
+                color: white;
+                padding-left: 1.5rem;
             }
         }
 
@@ -454,10 +531,6 @@
                 <img src="logo.jpg" alt="EGB Service Logo">
                 <span>EGB Service</span>
             </div>
-            <!-- Botón hamburguesa para pantallas pequeñas -->
-            <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
-                <i class="fas fa-bars"></i>
-            </button>
             <div class="nav-links" id="navLinks">
                 <a href="#inicio">Inicio</a>
                 <a href="#nuestro-local">Nuestro Local</a>
@@ -467,6 +540,10 @@
                 <a href="#testimonios">Testimonios</a>
                 <a href="#contacto">Contacto</a>
             </div>
+            <!-- Botón hamburguesa para pantallas pequeñas -->
+            <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </nav>  
     <!-- Backdrop para menú móvil -->
@@ -787,52 +864,88 @@
             once: true
         });
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-
         // Menú hamburguesa (móvil)
         (function() {
             const toggle = document.querySelector('.nav-toggle');
             const navLinks = document.getElementById('navLinks');
-            const navBackdrop = document.getElementById('navBackdrop');
+            const links = navLinks ? navLinks.querySelectorAll('a') : [];
 
             if (!toggle || !navLinks) return;
 
-            toggle.addEventListener('click', function(e) {
-                const isOpen = navLinks.classList.toggle('open');
-                toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                if (navBackdrop) {
-                    navBackdrop.classList.toggle('open', isOpen);
-                    navBackdrop.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-                }
-            });
-
-            // Cerrar al hacer clic en un enlace
-            navLinks.querySelectorAll('a').forEach(function(a) {
-                a.addEventListener('click', function() {
+            function toggleMenu() {
+                const isOpen = navLinks.classList.contains('open');
+                if (isOpen) {
                     navLinks.classList.remove('open');
                     toggle.setAttribute('aria-expanded', 'false');
+                    document.body.style.overflow = '';
+                } else {
+                    navLinks.classList.add('open');
+                    toggle.setAttribute('aria-expanded', 'true');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            function closeMenu() {
+                navLinks.classList.remove('open');
+                toggle.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+
+            // Toggle menu al hacer clic en el botón
+            toggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleMenu();
+            });
+
+            // Cerrar menú al hacer clic en un enlace
+            links.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        closeMenu();
+                    }
                 });
             });
 
-            // Cerrar al hacer clic fuera del menú (en móviles)
+            // Cerrar menú al hacer clic fuera
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    if (!navLinks.contains(e.target) && !toggle.contains(e.target)) {
+                        closeMenu();
+                    }
+                }
+            });
+
+            // Actualizar enlace activo al hacer scroll
+            function updateActiveLink() {
+                const fromTop = window.scrollY + 100;
+                
+                const current = Array.from(document.querySelectorAll('section[id]'))
+                    .find(section => section.offsetTop <= fromTop && (section.offsetTop + section.offsetHeight) > fromTop);
+
+                if (current) {
+                    links.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href').slice(1) === current.id) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            }
+
+            window.addEventListener('scroll', updateActiveLink);
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    navLinks.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Cerrar al hacer clic fuera del menú
             document.addEventListener('click', function(e) {
                 if (!navLinks.classList.contains('open')) return;
                 const isClickInside = navLinks.contains(e.target) || toggle.contains(e.target);
                 if (!isClickInside) {
-                    navLinks.classList.remove('open');
-                    toggle.setAttribute('aria-expanded', 'false');
-                    if (navBackdrop) {
-                        navBackdrop.classList.remove('open');
-                        navBackdrop.setAttribute('aria-hidden', 'true');
-                    }
+                    closeMenu();
                 }
             });
 
@@ -936,20 +1049,85 @@
             visibility: visible;
         }
 
-        /* Ajustes para el botón hamburguesa en móvil */
+        /* Ajustes para el menú móvil y botón hamburguesa */
         @media (max-width: 768px) {
             .nav-toggle {
-                position: relative;
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
                 z-index: 1200;
-                margin-right: 0.5rem;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                background: var(--primary);
+                color: white;
+                width: 44px;
+                height: 44px;
+                border-radius: 8px;
+                font-size: 1.5rem;
+                box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
             }
             
             .navbar {
                 padding: 0.75rem 1rem;
+                background: white;
             }
 
             .nav-logo {
                 z-index: 1200;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: white;
+                padding: 5rem 1rem 2rem;
+                display: none;
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: flex-start;
+                gap: 0.75rem;
+                opacity: 0;
+                transition: all 300ms ease;
+                z-index: 1100;
+                overflow-y: auto;
+            }
+
+            .nav-links.open {
+                display: flex;
+                opacity: 1;
+            }
+
+            .nav-links a {
+                display: block;
+                font-size: 1.2rem;
+                font-weight: 600;
+                padding: 1rem;
+                margin: 0;
+                text-align: left;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                color: var(--text);
+                text-decoration: none;
+                background: var(--card-bg);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            }
+
+            .nav-links a:hover,
+            .nav-links a:active {
+                background-color: var(--primary);
+                color: white;
+                padding-left: 1.5rem;
+            }
+
+            /* Indicador de sección activa */
+            .nav-links a.active {
+                background-color: var(--primary);
+                color: white;
+                padding-left: 1.5rem;
             }
         }
 
